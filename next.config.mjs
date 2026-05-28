@@ -1,6 +1,10 @@
-/** @type {import('next').NextConfig} */
+/** @type {import('next').Config} */
 const nextConfig = {
-  /* config options here */
-};
+  output: 'export',
+  basePath: '/your-repo-name', // required for GitHub Pages
+  images: {
+    unoptimized: true, // GitHub Pages can't optimize images
+  },
+}
 
-export default nextConfig;
+export default nextConfig
