@@ -3,6 +3,10 @@ import NewsList from "@/components/news-list";
 import { getAvailableNewsMonths, getAvailableNewsYears, getNewsForYear, getNewsForYearAndMonth } from "@/lib/news";
 import { MONTHS } from "@/lib/months-arr";
 
+export async function generateStaticParams() {
+    return [] // returns empty array for the base /archive route
+}
+
 export default async function FilteredNews({ params }) {
     const months = MONTHS;
     const { filter } = await params;
