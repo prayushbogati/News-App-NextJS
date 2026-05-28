@@ -75,8 +75,9 @@ ul {
 
 #home img {
     width: 8rem;
+    margin: auto;
     border-radius: 50%;
-    box-shadow: 0 0 10px 0 #181817;
+    box-shadow: 0 0 10px 0 #a0058b;
 }
 
 #home h1 {
@@ -86,15 +87,14 @@ ul {
 
 #home p {
     margin: 2rem 0;
-    color: #bcbcb7;
     font-size: 1.1rem;
 }
 
 #home a {
     display: inline-block;
     padding: 1rem 2rem;
-    background-color: #bcbcb7;
-    color: #181817;
+    background-color: rgb(155, 3, 155);
+    color: white;
     border-radius: 4px;
     text-decoration: none;
     font-weight: bold;
@@ -102,7 +102,7 @@ ul {
 }
 
 #home a:hover {
-    background-color: #e5e5e1;
+    background-color: rgb(110, 3, 110);
 }
 
 .news-list {
