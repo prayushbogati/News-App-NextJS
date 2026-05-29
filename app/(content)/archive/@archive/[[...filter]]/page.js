@@ -2,30 +2,17 @@ import Link from "next/link";
 import NewsList from "@/components/news-list";
 import { getAvailableNewsMonths, getAvailableNewsYears, getNewsForYear, getNewsForYearAndMonth } from "@/lib/news";
 import { MONTHS } from "@/lib/months-arr";
+import { Suspense } from "react";
 
-export async function generateStaticParams() {
-    return [] // returns empty array for the base /archive route
-}
 
-export default async function FilteredNews({ params }) {
-    const months = MONTHS;
-    const { filter } = await params;
-    // console.log(filter);
-
-    let links = getAvailableNewsYears()
-
-    const selectedYear = filter?.[0] // or filter ? filter[0] : undefined;
-    const selectedMonth = filter?.[1] // or filter ? filter[1] : undefined;
-
+const FilteredNews = async ({ year, month }) => {
     let news
-    if (selectedYear && !selectedMonth) {
-        news = getNewsForYear(selectedYear)
-        links = getAvailableNewsMonths(selectedYear)
+    if (year && !month) {
+        news = await getNewsForYear(year)
     }
-
-    if (selectedYear && selectedMonth) {
-        news = getNewsForYearAndMonth(selectedYear, months.indexOf(selectedMonth) + 1)
-        links = []
+    else if (year && month) {
+        const monthIndex = String(MONTHS.indexOf(month) + 1).padStart(2, '0') // "01", "02"
+        news = await getNewsForYearAndMonth(year, monthIndex)
     }
 
     let newsContent = <p className="text-xl p-5">No article found for current year!</p>
@@ -34,29 +21,61 @@ export default async function FilteredNews({ params }) {
         newsContent = <NewsList news={news} />
     }
 
-    if (selectedYear && !getAvailableNewsYears().includes(+selectedYear) || selectedMonth &&
-        !getAvailableNewsMonths(selectedYear)
-            .map(month => MONTHS[month - 1])
-            .includes(selectedMonth)) {
-        throw new Error("Invalid filter!")
+    return newsContent
+}
+
+const FilterNav = async ({ year, month }) => {
+
+    const availableYears = await getAvailableNewsYears()
+    let links = availableYears
+
+
+    if (year && !month) {
+        links = getAvailableNewsMonths(year)
     }
 
+    if (year && month) {
+        links = []
+    }
+
+    if (year && !availableYears.includes(year) || month &&
+        !getAvailableNewsMonths(year)
+            .map(month => MONTHS[month - 1])
+            .includes(month)) {
+        throw new Error("Invalid filter!")
+    }
     return (
-        <div>
-            <h1 className="text-2xl font-bold capitalize mb-5 mt-10">Archive</h1>
+        <nav>
             <div className="flex gap-5">
                 {
                     links.map(link => {
-                        const href = selectedYear ? `/archive/${selectedYear}/${months[link - 1]}` : `/archive/${link}`
-                        link = selectedYear ? months[link - 1] : link
+                        const href = year ? `/archive/${year}/${MONTHS[link - 1]}` : `/archive/${link}`
+                        link = year ? MONTHS[link - 1] : link
                         return (
                             <div key={link} className="border px-3 py-1 rounded-md bg-gray-200 hover:bg-gray-300"><Link href={href}>{link}</Link></div>
                         )
                     })
                 }
             </div>
+        </nav>
+    )
+}
 
-            {newsContent}
+export default async function FilteredNewsPage({ params }) {
+    const { filter } = await params;
+    // console.log(filter);
+
+    const selectedYear = filter?.[0] // or filter ? filter[0] : undefined;
+    const selectedMonth = filter?.[1] // or filter ? filter[1] : undefined;
+    return (
+        <div>
+            <Suspense fallback={<p className="text-x my-5 text-center">Loading filter links..</p>}>
+                <FilterNav year={selectedYear} month={selectedMonth} />
+            </Suspense>
+
+            <Suspense fallback={<p className="text-x my-5 text-center">Loading filtered news..</p>}>
+                <FilteredNews year={selectedYear} month={selectedMonth} />
+            </Suspense>
         </div>
     )
 }

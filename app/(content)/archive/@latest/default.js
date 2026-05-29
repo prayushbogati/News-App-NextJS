@@ -3,12 +3,12 @@
 import NewsList from "@/components/news-list"
 import { getLatestNews } from "@/lib/news"
 
-export default function LatestNewsPage(){
-    const news = getLatestNews()
-    return(
+export default async function LatestNewsPage() {
+    const news = await getLatestNews()
+    return (
         <div>
-            <h1 className="text-2xl font-bold capitalize mb-5 mt-10">Latest news</h1>
-            <NewsList news={news}/>
+            
+            <NewsList news={news} />
         </div>
     )
 }

@@ -1,10 +1,6 @@
-/** @type {import('next').Config} */
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  basePath: '/News-App-NextJS', // required for GitHub Pages
-  images: {
-    unoptimized: true, // GitHub Pages can't optimize images
-  },
-}
+  /* config options here */
+};
 
-export default nextConfig
+export default nextConfig;
